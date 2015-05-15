@@ -45,7 +45,6 @@ public class INA1_P1_A1_Rss {
 		{
 			builder.append(currentLine);
 			builder.append("\n");
-			
 			if(currentLine.contains("alternate"))
 			{
 				System.out.println(currentLine);
@@ -68,7 +67,7 @@ public class INA1_P1_A1_Rss {
 		
 		if(subStr==null)
 		{
-			System.out.println("♣ The site "+huc.toString().replaceAll("sun.net.www.protocol.http.HttpURLConnection:", "")+" does not contain a useable RSS-Feed ♣");
+			System.err.println("♣ The site "+huc.toString().replaceAll("sun.net.www.protocol.http.HttpURLConnection:", "")+" does not contain a useable RSS-Feed ♣");
 		}
 		else {
 			rssFeedUrl = subStr;
