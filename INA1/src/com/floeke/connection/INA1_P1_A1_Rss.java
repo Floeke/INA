@@ -121,7 +121,7 @@ public class INA1_P1_A1_Rss {
 			builder.append("\n");
 			
 			//Line contains keywords
-			if(currentLine.contains("alternate") && currentLine.contains("link rel=") && (currentLine.contains("rss") || currentLine.contains("xml")))
+			if(currentLine.contains("alternate") && currentLine.contains("link") && (currentLine.contains("rss") || currentLine.contains("xml")))
 			{
 				System.out.println(currentLine);
 				int from = currentLine.indexOf("href=") + 6;
@@ -134,7 +134,7 @@ public class INA1_P1_A1_Rss {
 				}
 				if(currentLine.contains(".xml"))
 				{
-					to = currentLine.indexOf(".rss") + 4;
+					to = currentLine.indexOf(".xml") + 4;
 				}
 				if(currentLine.contains("rss."))
 				{
