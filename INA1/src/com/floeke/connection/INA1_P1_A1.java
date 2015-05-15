@@ -6,6 +6,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Scanner;
 
+/**
+ * Main-Class
+ * @author Floeke
+ *
+ */
 public class INA1_P1_A1 {
 	
 	public static HttpURLConnection huc;
@@ -17,24 +22,29 @@ public class INA1_P1_A1 {
 		String urlString = scanner.next();
 		scanner.close();
 		
+		//Fix URL
 		if(!urlString.startsWith("http://"))
 		{
 			urlString = "http://" + urlString;
 		}
 		
 		System.out.println("\nTrying to connect to "+urlString+" please wait...\n");
+		
 		try {
+			
+			//Open a connection to the given URL
 			HttpURLConnection huc = (HttpURLConnection) new URL(urlString).openConnection();
 			huc.setRequestMethod("GET");
 			
 			if(huc.getResponseCode() != HttpURLConnection.HTTP_OK)
 			{
-				System.out.println("Server-Status is not OK! Server-Message: " + huc.getResponseMessage());
-			} else {
+				System.err.println("Server-Status is not OK! Server-Message: " + huc.getResponseMessage());
+			} 
+			else {
 					INA1_P1_A1_Rss rssReader = new INA1_P1_A1_Rss(huc);
 					rssReader.searchForRssFeed();
 					rssReader.searchItems();
-					}		
+				  }		
 			
 		} catch (MalformedURLException e) {
 			System.err.println("♥ "+urlString+" is not a valid URL! ♣\n");
