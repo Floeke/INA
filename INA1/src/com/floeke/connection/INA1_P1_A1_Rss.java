@@ -43,8 +43,10 @@ public class INA1_P1_A1_Rss {
 			//Enclosed item tags
 			if(currentLine.contains("<item>"))
 			{
-				while(!currentLine.contains("</item>"))
+				do
 				{
+					//TODO Add snipping for 1-line RSS-Feed
+					
 					//Enclosed title tags
 					if(currentLine.contains("<title>"))
 					{
@@ -90,9 +92,12 @@ public class INA1_P1_A1_Rss {
 					}
 					
 					//Read the next line
-					currentLine = in.readLine();
+					if(!currentLine.contains("</item>"))
+					{
+						currentLine = in.readLine();
+					}
 									
-				}
+				} while(!currentLine.contains("</item>"));
 				
 				builder.append("\n");
 			}
