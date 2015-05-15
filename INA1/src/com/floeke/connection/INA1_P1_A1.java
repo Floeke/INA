@@ -1,8 +1,6 @@
 package com.floeke.connection;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -33,24 +31,16 @@ public class INA1_P1_A1 {
 			{
 				System.out.println("Server-Status is not OK! Server-Message: " + huc.getResponseMessage());
 			} else {
-				try{
 					INA1_P1_A1_Rss rssReader = new INA1_P1_A1_Rss(huc);
 					rssReader.searchForRssFeed();
-					rssReader.parse();
-				} catch (Exception e)
-				{
-					System.out.println("Failed to parse!");
-				}
-				
-			}
+					rssReader.searchItems();
+					}		
 			
 		} catch (MalformedURLException e) {
-			System.out.println("♥ "+e.getMessage()+" is not a valid URL ♣\n");
+			System.err.println("♥ "+urlString+" is not a valid URL! ♣\n");
 		} catch (IOException e) {
-			System.out.println("♥ "+e.getMessage()+" caused a I/O-ERROR ♣\n");
-		}
-		
-		
+			System.err.println("♥ "+e.getMessage()+" caused a I/O-ERROR! ♣\n");
+		}		
 	}
 
 }

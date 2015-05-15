@@ -3,18 +3,8 @@ package com.floeke.connection;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
 
 public class INA1_P1_A1_Rss {
 	
@@ -25,15 +15,74 @@ public class INA1_P1_A1_Rss {
 	{
 		this.huc = huc;
 	}
-	
-	public void parse() throws ParserConfigurationException, MalformedURLException, SAXException, IOException
+	 
+	public void searchItems() throws IOException
 	{
-		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-		DocumentBuilder db = dbf.newDocumentBuilder();
-		Document doc = db.parse(new URL(rssFeedUrl).openStream());
-		OutputStreamWriter outWriter = new OutputStreamWriter(System.out, "UTF-8");
-		new INA1_P1_A1_DOMEcho(new PrintWriter(outWriter, true)).echo(doc);
+		StringBuilder builder = new StringBuilder();
+		HttpURLConnection rssConnection = (HttpURLConnection) new URL(rssFeedUrl).openConnection();
+		BufferedReader in = new BufferedReader(new InputStreamReader(rssConnection.getInputStream()));
+		String currentLine;
+		
+		while((currentLine = in.readLine()) != null)
+		{
+			
+			if(currentLine.contains("<item>"))
+			{
+				while(!currentLine.contains("</item>"))
+				{
+					if(currentLine.contains("<title>"))
+					{
+						while(!currentLine.contains("</title>"))
+						{
+							currentLine = currentLine + in.readLine();
+						}
+						
+						builder.append("\nTitel: " + currentLine.replace("<title>", "").replace("</title>", ""));
+					}
+					
+					if(currentLine.contains("<description>"))
+					{
+						while(!currentLine.contains("</description>"))
+						{
+							currentLine = currentLine + in.readLine();
+						}
+						
+						builder.append("\nDescription: " + currentLine.replace("<description>", "").replace("</description>", ""));
+					}
+					
+					if(currentLine.contains("<category>"))
+					{
+						while(!currentLine.contains("</category>"))
+						{
+							currentLine = currentLine + in.readLine();
+						}
+						
+						builder.append("\nKategorie: " + currentLine.replace("<category>", "").replace("</category>", ""));
+					}
+					
+					
+					if(currentLine.contains("<pubDate>"))
+					{
+						while(!currentLine.contains("</pubDate>"))
+						{
+							currentLine = currentLine + in.readLine();
+						}
+						
+						builder.append("\nPublished: " + currentLine.replace("<pubDate>", "").replace("</pubDate>", ""));
+					}
+					
+					
+					currentLine = in.readLine();
+									
+				}
+				
+				builder.append("\n");
+			}
+		}
+		
+		System.out.println(builder.toString().replace("ä", "ae").replace("ö", "oe").replace("ü", "ue"));
 	}
+	
 	
 	public void searchForRssFeed() throws IOException
 	{
@@ -45,7 +94,7 @@ public class INA1_P1_A1_Rss {
 		{
 			builder.append(currentLine);
 			builder.append("\n");
-			if(currentLine.contains("alternate"))
+			if(currentLine.contains("alternate") && currentLine.contains("link rel=") && (currentLine.contains("rss") || currentLine.contains("xml")))
 			{
 				System.out.println(currentLine);
 				int from = currentLine.indexOf("href=") + 6;
@@ -57,6 +106,16 @@ public class INA1_P1_A1_Rss {
 				if(currentLine.contains(".xml"))
 				{
 					to = currentLine.indexOf(".rss") + 4;
+				}
+				if(currentLine.contains("rss."))
+				{
+					to = currentLine.indexOf(">") - 2;
+				}
+				
+				if(to < from || from < 0)
+				{
+					System.err.println("Could not find RSS-Feed");
+					break;
 				}
 				subStr = currentLine.subSequence(from, to).toString();
 				System.out.println("\n\n"+subStr);
