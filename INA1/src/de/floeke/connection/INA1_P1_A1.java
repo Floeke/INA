@@ -1,4 +1,4 @@
-package com.floeke.connection;
+package de.floeke.connection;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
