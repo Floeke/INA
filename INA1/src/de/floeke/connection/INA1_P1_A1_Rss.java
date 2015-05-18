@@ -43,10 +43,12 @@ public class INA1_P1_A1_Rss {
 			//Enclosed item tags
 			if(currentLine.contains("<item>"))
 			{
-				do
+				if(currentLine.contains("</item>"))
 				{
-					//TODO Add snipping for 1-line RSS-Feed
-					
+					builder.append(snipSingleLineRss(currentLine));
+				}
+				else do
+				{
 					//Enclosed title tags
 					if(currentLine.contains("<title>"))
 					{
@@ -77,7 +79,7 @@ public class INA1_P1_A1_Rss {
 							currentLine = currentLine + in.readLine();
 						}
 						
-						builder.append("\nKategorie: " + currentLine.replace("<category>", "").replace("</category>", ""));
+						builder.append("\nCategory: " + currentLine.replace("<category>", "").replace("</category>", ""));
 					}
 					
 					//Enclosed pubDate tags
@@ -105,6 +107,86 @@ public class INA1_P1_A1_Rss {
 		
 		in.close();
 		System.out.println(builder.toString().replace("ä", "ae").replace("ö", "oe").replace("ü", "ue"));
+	}
+	
+	private String snipSingleLineRss(String rss)
+	{
+		String placeholder;
+		StringBuilder builder = new StringBuilder();
+	
+		
+		
+		while(rss.contains("<item>"))
+		{
+			if(rss.contains("<title>"))
+			{
+				int from = 0, to =0;
+				from = rss.indexOf("<title>") + "<title>".length();
+				to = rss.indexOf("</title>");
+				if(to > from)
+				{
+					placeholder = rss.subSequence(from, to).toString();
+					builder.append("Titel: " + placeholder);
+					rss = rss.replaceFirst("<title>" + placeholder + "</title>", "");
+					builder.append('\n');
+				}
+			}
+			
+			if(rss.contains("<category>"))
+			{
+				int from = 0, to =0;
+				from = rss.indexOf("<category>") + "<category>".length();
+				to = rss.indexOf("</category>");
+				if(to > from)
+				{
+					placeholder = rss.subSequence(from, to).toString();
+					builder.append("Category: " + placeholder);
+					rss = rss.replaceFirst("<category>" + placeholder + "</category>", "");
+					builder.append('\n');
+				}
+			}
+			
+			if(rss.contains("<description>"))
+			{
+				int from = 0, to =0;
+				from = rss.indexOf("<description>") + "<description>".length();
+				to = rss.indexOf("</description>");
+				if(to > from)
+				{
+					placeholder = rss.subSequence(from, to).toString();
+					builder.append("Description: " + placeholder);
+					rss.replaceFirst("<description>" + placeholder + "</description>", "");
+					builder.append('\n');
+				}
+				
+				
+			}
+			
+			if(rss.contains("<pubDate>"))
+			{
+				int from = 0, to =0;
+				from = rss.indexOf("<pubDate>") + "<pubDate>".length();
+				to = rss.indexOf("</pubDate>");
+				if(to > from)
+				{
+					placeholder = rss.subSequence(from, to).toString();
+					builder.append("Published: " + placeholder);
+					rss.replaceFirst("<pubDate>" + placeholder + "</pubDate>", "");
+					builder.append('\n');
+				}
+				
+				
+			}
+			
+			builder.append('\n');
+			rss.replaceFirst("<item>.*</item>", "");
+		}
+		
+		System.out.println(builder.toString());
+		
+		return builder.toString();
+		
+		
 	}
 	
 	
