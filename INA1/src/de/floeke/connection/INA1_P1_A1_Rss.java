@@ -1,6 +1,10 @@
 package de.floeke.connection;
 
+import java.awt.peer.CheckboxMenuItemPeer;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -112,12 +116,18 @@ public class INA1_P1_A1_Rss {
 	private String snipSingleLineRss(String rss)
 	{
 		String placeholder;
-		StringBuilder builder = new StringBuilder();
-	
+		StringBuilder builder = new StringBuilder("Single Lined RSS-Feed found\n");
 		
+		int from1 = 0;
+		int to1 = rss.indexOf("<item>");
+		String sub = rss.subSequence(from1, to1).toString();
+		rss = rss.replaceFirst(sub, "");
+	
 		
 		while(rss.contains("<item>"))
 		{
+			
+			
 			if(rss.contains("<title>"))
 			{
 				int from = 0, to =0;
@@ -155,7 +165,7 @@ public class INA1_P1_A1_Rss {
 				{
 					placeholder = rss.subSequence(from, to).toString();
 					builder.append("Description: " + placeholder);
-					rss.replaceFirst("<description>" + placeholder + "</description>", "");
+					rss = rss.replaceFirst("<description>" + placeholder + "</description>", "");
 					builder.append('\n');
 				}
 				
@@ -171,7 +181,7 @@ public class INA1_P1_A1_Rss {
 				{
 					placeholder = rss.subSequence(from, to).toString();
 					builder.append("Published: " + placeholder);
-					rss.replaceFirst("<pubDate>" + placeholder + "</pubDate>", "");
+					rss = rss.replaceFirst("<pubDate>" + placeholder + "</pubDate>", "");
 					builder.append('\n');
 				}
 				
@@ -179,10 +189,22 @@ public class INA1_P1_A1_Rss {
 			}
 			
 			builder.append('\n');
-			rss.replaceFirst("<item>.*</item>", "");
+			//rss = rss.replaceFirst("<item>.*</item>", "");
+			{
+				int from = 0, to = 0;
+				from = rss.indexOf("<item>");
+				to = rss.indexOf("</item>") + "</item>".length();
+				if(to < rss.length())
+				{
+					/*placeholder = rss.subSequence(from, to).toString();
+					rss = rss.replaceFirst(placeholder, "");*/
+					rss = rss.substring(to, rss.length());
+					//System.out.println(placeholder);
+					builder.append('\n');
+				}
+				
+			}
 		}
-		
-		System.out.println(builder.toString());
 		
 		return builder.toString();
 		
@@ -250,7 +272,6 @@ public class INA1_P1_A1_Rss {
 			rssFeedUrl = subStr;
 		}
 		
-		//System.out.println(builder.toString());
 	}
 
 }
