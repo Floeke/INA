@@ -54,10 +54,3 @@ public class INA1_P1_A1 {
 	}
 
 }
-
-
-int main()
-{
-	
-	return 15;
-}
